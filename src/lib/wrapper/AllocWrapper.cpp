@@ -526,15 +526,49 @@ void ThreadLocalState::init(void)
 **/
 void * malloc(size_t size)
 {
+    if (gblState.malloc == 0)
+    {
+        return ((::MallocFuncPtr)dlsym(RTLD_NEXT,"malloc"))(size);
+    }
 	return malt_wrap_malloc(size, gblState.malloc, MALT_RETADDR);
 }
 
+// fix for llvm by lantern0 (__emutls_get_address)
+static pthread_key_t tls_key;
+static pthread_once_t tls_key_once = PTHREAD_ONCE_INIT;
+
+void make_tls_key() {
+    pthread_key_create(&tls_key, NULL);
+}
+
+void* get_tls_state() {
+    pthread_once(&tls_key_once, make_tls_key);
+    return pthread_getspecific(tls_key);
+}
+
+void set_tls_state(void* state) {
+    pthread_once(&tls_key_once, make_tls_key);
+    pthread_setspecific(tls_key, state);
+}
 /**********************************************************/
 void * MALT::malt_wrap_malloc(size_t size, const MallocFuncPtr & real_malloc, void * retaddr)
 {
-	//get local TLS and check init
+    void *state = get_tls_state();
+
+    if (tls_key == NULL) {
+        make_tls_key();
+        return real_malloc(size);
+    }
+
+    if (state) {
+        return real_malloc(size);
+    }
+
+    set_tls_state((void*)1);
+    //get local TLS and check init
 	MALT_WRAPPER_LOCAL_STATE_INIT
 
+    set_tls_state(NULL);
 	//run the default function
 	assert(gblState.status > ALLOC_WRAP_INIT_SYM);
 	

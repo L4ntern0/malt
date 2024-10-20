@@ -46,7 +46,8 @@ typedef std::vector<SimpleCallStackNode*,STLInternalAllocator<SimpleCallStackNod
  * It also replace the default memory allocator to use the internal on not to 
  * self disturb the profiling.
 **/
-typedef std::map<StackHash,SimpleBacktraceVector,std::less<StackHash>,STLInternalAllocator<std::pair<StackHash,SimpleBacktraceVector> > > SimpleBacktraceVectorMap;
+// typedef std::map<StackHash,SimpleBacktraceVector,std::less<StackHash>,STLInternalAllocator<std::pair<StackHash,SimpleBacktraceVector> > > SimpleBacktraceVectorMap;
+typedef std::map<StackHash,SimpleBacktraceVector,std::less<StackHash>,STLInternalAllocator<std::pair<const StackHash,SimpleBacktraceVector> > > SimpleBacktraceVectorMap; // fix for ohos by lantern
 
 /**********************************************************/
 /**

@@ -73,7 +73,8 @@ struct MaqaoSite
 /** Map to join a raw address to a callsite description **/
 typedef std::map<void*,CallSite> CallSiteMap;
 /** Map to join a raw address to a mapqao call site. It uses the internal allocator as used while running. **/
-typedef std::map<void*,MaqaoSite,std::less<void*>,STLInternalAllocator<std::pair<void*,MaqaoSite> > > MaqaoSiteMap;
+// typedef std::map<void*,MaqaoSite,std::less<void*>,STLInternalAllocator<std::pair<void*,MaqaoSite> > > MaqaoSiteMap;
+typedef std::map<void*,MaqaoSite, std::less<void*>, STLInternalAllocator<std::pair<void* const,MaqaoSite> > > MaqaoSiteMap; // fix for ohos by lantern
 
 /**********************************************************/
 /**

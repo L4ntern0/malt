@@ -61,7 +61,7 @@ struct SegmentInfo
 
 /**********************************************************/
 /** Map used to store informations about allocated segments. **/
-typedef std::map<void*,SegmentInfo,std::less<void*>,STLInternalAllocator<std::pair<void*,SegmentInfo> > > SegmentInfoMap;
+typedef std::map<void* ,SegmentInfo,std::less<void*>,STLInternalAllocator<std::pair<void* const,SegmentInfo> > > SegmentInfoMap;
 // typedef std::map<void*,SegmentInfo> SegmentInfoMap;
 /** Map used to summurize the memory leaks at exit time. **/
 typedef std::map<const Stack *,LeakInfo> LeakInfoMap;

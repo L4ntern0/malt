@@ -462,15 +462,18 @@ void SymbolSolver::solveMaqaoNames(void)
  * in the binary file. It might need some tricks when ASLR is enabled which
  * is obtained by getaddr().
 */
+
 void * SymbolSolver::getASRLOffset(void * instrAddr) const
 {
 	//From https://stackoverflow.com/questions/55066749/how-to-find-load-relocation-for-a-pie-binary
 	Dl_info info;
 	void *extra = NULL;
 	size_t elf2AddrOffset = 0;
-	if (dladdr1(instrAddr, &info, &extra, RTLD_DL_LINKMAP)) {
-		struct link_map *map = (struct link_map *)extra;
-		elf2AddrOffset = map->l_addr;
+	// if (dladdr1(instrAddr, &info, &extra, RTLD_DL_LINKMAP)) {
+    if (dladdr(instrAddr, &info)) { // fix for ohos by lantern
+		// struct link_map *map = (struct link_map *)extra;
+		// elf2AddrOffset = map->l_addr;  // fix for ohos by lantern
+        elf2AddrOffset = (size_t)info.dli_fbase;
 	}
 	return (void*)elf2AddrOffset;
 }
